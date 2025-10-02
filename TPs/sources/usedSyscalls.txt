@@ -1,0 +1,94 @@
+Syscalls Linux 32 bits (int 0x80)
+
+Número | Nombre           | Argumentos principales (registros)
+------------------------------------------------------------
+0      | restart_syscall  | —
+1      | exit             | ebx = status
+2      | fork             | —
+3      | read             | ebx = fd, ecx = buf, edx = count
+4      | write            | ebx = fd, ecx = buf, edx = count
+5      | open             | ebx = filename, ecx = flags, edx = mode
+6      | close            | ebx = fd
+7      | waitpid          | ebx = pid, ecx = stat_addr, edx = options
+19     | lseek            | ebx = fd, ecx = offset, edx = whence
+37     | kill             | ebx = pid, ecx = sig
+45     | brk              | ebx = new_end_of_data
+54     | ioctl            | ebx = fd, ecx = request, edx = argp
+90     | mmap             | ebx = addr, ecx = length, edx = prot, esi = flags, edi = fd, ebp = offset
+91     | munmap           | ebx = addr, ecx = length
+102    | socketcall       | ebx = call_number, ecx = args_pointer
+120    | clone            | ebx = flags, ecx = child_stack, …
+125    | mprotect         | ebx = addr, ecx = len, edx = prot
+140    | llseek           | ebx = fd, ecx = offset_high, edx = offset_low, esi = result, edi = whence
+162    | nanosleep        | ebx = req, ecx = rem
+168    | poll             | ebx = fds, ecx = nfds, edx = timeout
+174    | rt_sigaction     | ebx = sig, ecx = act, edx = oact, esi = sigsetsize
+175    | rt_sigprocmask   | ebx = how, ecx = set, edx = oset, esi = sigsetsize
+182    | clone (nuevo)    | igual que clone usual
+192    | mmap2            | versión moderna de mmap (para mayores offsets)
+195    | stat64           | ebx = filename, ecx = statbuf
+197    | fstat64          | ebx = fd, ecx = statbuf
+199    | lstat64          | ebx = filename, ecx = statbuf
+243    | exit_group       | ebx = status (termina todos los hilos del proceso)
+
+
+===============================
+   CONTROL DE PROCESOS
+===============================
+1   exit(status)         → Termina el proceso actual
+2   fork()               → Crea un nuevo proceso
+7   waitpid(pid,stat,opt)→ Espera que un hijo termine
+37  kill(pid,sig)        → Envía señal a un proceso
+243 exit_group(status)   → Termina todos los hilos del proceso
+
+===============================
+   ENTRADA / SALIDA (E/S)
+===============================
+3   read(fd, buf, count)  → Lee de un descriptor
+4   write(fd, buf, count) → Escribe en un descriptor
+5   open(file, flags,mode)→ Abre un archivo
+6   close(fd)             → Cierra un descriptor
+19  lseek(fd,off,whence)  → Mueve el puntero de archivo
+54  ioctl(fd,req,argp)    → Control de dispositivo
+140 llseek(fd,off_hi,off_lo,res,whence) → lseek con offset 64 bits
+
+===============================
+   MEMORIA
+===============================
+45  brk(addr)             → Cambia el fin del heap (sbrk)
+90  mmap(addr,len,prot,flags,fd,off) → Mapear memoria/archivo
+91  munmap(addr,len)      → Liberar memoria mapeada
+125 mprotect(addr,len,prot)→ Cambiar permisos de memoria
+192 mmap2(...)            → Variante moderna de mmap (offsets grandes)
+
+===============================
+   SEÑALES
+===============================
+174 rt_sigaction(sig,act,oact,size) → Define manejador de señal
+175 rt_sigprocmask(how,set,oset,size) → Bloquea/desbloquea señales
+
+===============================
+   HILOS / CLONACIÓN
+===============================
+120 clone(flags,stack,…) → Crea un hilo/proceso (base de pthreads)
+182 clone(...)           → Versión más nueva
+
+===============================
+   TIEMPO Y ESPERA
+===============================
+162 nanosleep(req,rem)    → Duerme el proceso (ns)
+168 poll(fds,nfds,timeout)→ Espera que fds estén listos
+
+===============================
+   SOCKETS / RED
+===============================
+102 socketcall(call,args) → Multiplexor de llamadas de red
+                            (socket, bind, connect, send, recv, etc.)
+
+===============================
+   ARCHIVOS Y ESTADÍSTICAS
+===============================
+195 stat64(file,statbuf)  → Info de un archivo
+197 fstat64(fd,statbuf)   → Info de un archivo desde un fd
+199 lstat64(file,statbuf) → Info de un link simbólico
+

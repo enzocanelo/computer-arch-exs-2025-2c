@@ -1,23 +1,18 @@
-; hello.asm — NASM (Intel syntax), Linux x86-64
-; Escribe "Hello World\n" en stdout y termina.
-
-global _start
-
 section .data
-msg:    db "Hello World", 10     ; 10 = '\n'
-len:    equ $ - msg		 ; len = $ (position) - msg (msg position)
+    msg db "Hello, World",10,0
+    len equ $-msg
 
 section .text
+    GLOBAL _start
+    EXTERN write
+    EXTERN exit
+
 _start:
-    ; write(1, msg, len)
-    mov     rax, 1          ; syscall write
-    mov     rdi, 1          ; fd = stdout
-    mov     rsi, msg        ; buffer
-    mov     rdx, len        ; longitud
-    syscall
 
-    ; exit(0)
-    mov     rax, 60         ; syscall exit
-    xor     rdi, rdi        ; código 0
-    syscall
+    push len 		
+    push msg		
+    call write
+    add esp, 8		; limpio los 2 parametros
 
+    mov ebx, 0 		; pongo 0 en ebx para que exit(0)
+    call exit		
