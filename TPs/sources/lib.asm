@@ -1,4 +1,5 @@
 GLOBAL write
+GLOBAL exit
 
 section .data
 	new_line db 10,0
